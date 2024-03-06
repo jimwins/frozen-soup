@@ -1,0 +1,29 @@
+[project]
+name = "frozen-soup"
+version = "0.1"
+description = "Create a single-file version of an HTML file"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "Jim Winstead"}]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/jimwins/frozen-soup"
+Changelog = "https://github.com/jimwins/frozen-soup/releases"
+Issues = "https://github.com/jimwins/frozen-soup/issues"
+CI = "https://github.com/jimwins/frozen-soup/actions"
+
+
+[project.optional-dependencies]
+test = ["pytest"]
