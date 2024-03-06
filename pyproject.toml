@@ -24,6 +24,9 @@ Changelog = "https://github.com/jimwins/frozen-soup/releases"
 Issues = "https://github.com/jimwins/frozen-soup/issues"
 CI = "https://github.com/jimwins/frozen-soup/actions"
 
-
 [project.optional-dependencies]
-test = ["pytest"]
+test = ["pytest", "requests-testadapter"]
+
+[tool.pytest.ini_options]
+# Default of Test* causes noise with request_testadapter
+python_classes = "*Test"
