@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 import tinycss2
@@ -9,7 +9,7 @@ def expand_urls_in_css(
     css: str,
     base_url: str,
     session: Optional[requests.Session] = None,
-    timeout: Optional[float|tuple] = 900.0,
+    timeout: Union[float, tuple[float, float], None] = 900.0,
 ) -> str:
     rules = tinycss2.parse_stylesheet(css)
 
@@ -25,7 +25,7 @@ def expand_urls_in_rule(
     rule,
     base_url: str,
     session: Optional[requests.Session] = None,
-    timeout: Optional[float|tuple] = 900.0,
+    timeout: Union[float, tuple[float, float], None] = 900.0,
 ):
     if type(rule) == tinycss2.ast.QualifiedRule or type(rule) == tinycss2.ast.AtRule:
         for child_rule in rule.content:

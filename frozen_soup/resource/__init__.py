@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import base64
 import requests
@@ -8,7 +8,7 @@ def get_ref_as_dataurl(
     base_url: str,
     ref_url: str,
     session: requests.Session,
-    timeout: Optional[float|tuple],
+    timeout: Union[float, tuple[float, float], None] = 900.0,
 ) -> str:
     url = urljoin(base_url, ref_url)
     response = session.get(url, timeout= timeout)

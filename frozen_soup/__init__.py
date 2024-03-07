@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 
@@ -13,7 +13,7 @@ from .css import expand_urls_in_css
 def freeze_to_string(
     url: str,
     session: Optional[requests.Session] = None,
-    timeout: Optional[float|tuple] = 900.0,
+    timeout: Union[float, tuple[float, float], None] = 900.0,
     formatter: str = 'html5',
 ) -> str:
     if session is None:
