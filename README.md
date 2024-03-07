@@ -35,6 +35,17 @@ import frozen_soup
 output = freeze_to_string("https://www.example.com")
 ```
 
+###
+
+This will serve up a single-file HTML version of the URL supplied. (This is
+not even vaguely appropriate for production use, but handy for testing.)
+
+```bash
+$ python -mfrozen_soup.server
+Server started http://localhost:8080
+$ curl -s http://localhost:8080/https://www.example.com
+```
+
 ## Development
 
 To contribute to this library, first checkout the code. Then create a new virtual environment:
