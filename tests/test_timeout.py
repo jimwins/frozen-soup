@@ -18,8 +18,14 @@ class TimeoutTestAdapter(TestAdapter):
     def send(self, request, stream=False, timeout=None,
              verify=True, cert=None, proxies=None):
 
-        if (type(timeout) == int and timeout < self.timeout):
-            raise ConnectTimeoutError
+        if type(timeout) == int:
+            if (timeout < self.timeout):
+                raise ConnectTimeoutError
+        elif type(timeout) == tuple:
+            if (timeout[0] < self.timeout):
+                raise ConnectTimeoutError
+            elif (timeout[1] < self.timeout):
+                raise ReadTimeoutError("(dummy)", request.url, "Read timeout!")
 
         return super().send(request, stream, timeout, verify, cert, proxies)
 
@@ -50,3 +56,15 @@ def test_timeout_okay_on_img(session):
 def test_timeout_raised_on_img(session):
     with pytest.raises(ConnectTimeoutError):
         out = freeze_to_string('http://test/img-contains-long-timeout', session, timeout= 100)
+
+def test_timeout_tuple_okay(session):
+    out = freeze_to_string('http://test/short-timeout', session, timeout= (100,100))
+    assert out == 'DATA'
+
+def test_timeout_tuple_connect_raised(session):
+    with pytest.raises(ConnectTimeoutError):
+        out = freeze_to_string('http://test/long-timeout', session, timeout= (100, 1200))
+
+def test_timeout_tuple_read_raised(session):
+    with pytest.raises(ReadTimeoutError):
+        out = freeze_to_string('http://test/long-timeout', session, timeout= (1200, 100))
