@@ -3,7 +3,7 @@ name = "frozen-soup"
 version = "0.1"
 description = "Create a single-file version of an HTML file"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [{name = "Jim Winstead"}]
 license = {text = "Apache-2.0"}
 classifiers = [
