@@ -23,15 +23,23 @@ pip install frozen-soup
 ```
 ## Usage
 
-Usage instructions go here.
+```base
+python -mfrozen_soup https://www.example.com
+```
+
+```python
+import frozen_soup
+
+output = freeze_to_string("https://www.example.com")
+```
 
 ## Development
 
 To contribute to this library, first checkout the code. Then create a new virtual environment:
 ```bash
 cd frozen-soup
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 ```
 Now install the dependencies and test dependencies:
 ```bash
