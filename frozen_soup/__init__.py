@@ -13,30 +13,31 @@ from .css import expand_urls_in_css
 def freeze_to_string(
     url: str,
     session: Optional[requests.Session] = None,
-    formatter: str = 'html5'
+    timeout: Optional[float|tuple] = 900.0,
+    formatter: str = 'html5',
 ) -> str:
     if session is None:
         session = requests.Session()
 
-    r = session.get(url)
+    r = session.get(url, timeout= timeout)
 
     soup = BeautifulSoup(r.text, 'html.parser')
 
     # Inline images
     for img in soup.find_all('img'):
-        img['src'] = get_ref_as_dataurl(url, img['src'], session)
+        img['src'] = get_ref_as_dataurl(url, img['src'], session, timeout)
 
     # Handle <link> elements
     for link in soup.find_all('link'):
         # Inline rel="icon"
         if 'icon' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session)
+            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
 
         elif 'apple-touch-icon' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session)
+            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
 
         elif 'apple-touch-startup-image' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session)
+            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
 
         # Turn rel="stylesheet" into <style>
         elif 'stylesheet' in link.get_attribute_list('rel'):
@@ -44,7 +45,7 @@ def freeze_to_string(
             response = session.get(stylesheet_url)
             if response.status_code == 200:
                 style = soup.new_tag('style')
-                style.string = expand_urls_in_css(response.text, stylesheet_url, session)
+                style.string = expand_urls_in_css(response.text, stylesheet_url, session, timeout)
                 # Carry over media=""
                 if link.get('media'):
                     style['media'] = link['media']

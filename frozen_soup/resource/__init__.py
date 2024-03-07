@@ -1,10 +1,17 @@
+from typing import Optional
+
 import base64
 import requests
 from urllib.parse import urljoin
 
-def get_ref_as_dataurl(base_url: str, ref_url: str, session: requests.Session) -> str:
+def get_ref_as_dataurl(
+    base_url: str,
+    ref_url: str,
+    session: requests.Session,
+    timeout: Optional[float|tuple],
+) -> str:
     url = urljoin(base_url, ref_url)
-    response = session.get(url)
+    response = session.get(url, timeout= timeout)
     if response.status_code == 200:
         # Encode the content to base64 - don't use urlsafe_b64encode because
         # the browser won't be passing this on to a server, and they don't
@@ -17,4 +24,3 @@ def get_ref_as_dataurl(base_url: str, ref_url: str, session: requests.Session) -
         return f"data:{content_type};base64,{encoded_content}"
     else:
         raise Exception(f"Unable to generate base64-encoded value")
-

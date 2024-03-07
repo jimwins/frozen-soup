@@ -25,10 +25,15 @@ def main() -> int:
         description  = 'Create a single-file version of an HTML file',
     )
     parser.add_argument('url')
+    parser.add_argument(
+        '-T', '--timeout',
+        type=float,
+        help='default connect and read timeout in seconds'
+    )
 
     args = parser.parse_args()
 
-    print(freeze_to_string(args.url))
+    print(freeze_to_string(args.url, timeout=args.timeout))
 
     return 0
 
