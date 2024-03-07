@@ -42,7 +42,7 @@ def freeze_to_string(
         # Turn rel="stylesheet" into <style>
         elif 'stylesheet' in link.get_attribute_list('rel'):
             stylesheet_url = urljoin(url, link['href'])
-            response = session.get(stylesheet_url)
+            response = session.get(stylesheet_url, timeout=timeout)
             if response.status_code == 200:
                 style = soup.new_tag('style')
                 style.string = expand_urls_in_css(response.text, stylesheet_url, session, timeout)
@@ -57,7 +57,7 @@ def freeze_to_string(
     # Inline <script src="">
     for script in soup.find_all('script'):
         if script.get('src'):
-            response = session.get(urljoin(url, script['src']))
+            response = session.get(urljoin(url, script['src']), timeout=timeout)
             if response.status_code == 200:
                 script.string = response.text
                 # TODO what other attributes do we care about?
