@@ -30,3 +30,7 @@ test = ["pytest", "requests-testadapter"]
 [tool.pytest.ini_options]
 # Default of Test* causes noise with request_testadapter
 python_classes = "*Test"
+
+[tool.distutils.egg_info]
+# Not really using this, so hide it for now
+egg_base = ".egg-info"
