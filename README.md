@@ -8,8 +8,10 @@
 Frozen Soup is a Python library for creating a single-file version of an HTML
 file by pulling in required external resources and in-lining them.
 
-Built with Python using [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
-and [Request](https://github.com/psf/requests).
+Built with Python using:
+* [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
+* [Request](https://github.com/psf/requests)
+* [tinycss2](https://github.com/Kozea/tinycss2)
 
 Inspired by (but not based on) [SingleFile](https://github.com/gildas-lormeau/SingleFile).
 

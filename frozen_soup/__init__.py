@@ -7,21 +7,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import base64
 
-def _get_ref_as_dataurl(base_url: str, ref_url: str, session: requests.Session) -> str:
-    url = urljoin(base_url, ref_url)
-    response = session.get(url)
-    if response.status_code == 200:
-        # Encode the content to base64 - don't use urlsafe_b64encode because
-        # the browser won't be passing this on to a server, and they don't
-        # expect the 'URL-safe' substitutions
-        encoded_content = base64.b64encode(response.content).decode("utf-8")
-        # Grab the content-type from the response headers
-        content_type = response.headers.get('Content-Type')
-        # TODO: what if we have no content_type?
-        # Return the data: URL with appropriate MIME type
-        return f"data:{content_type};base64,{encoded_content}"
-    else:
-        raise Exception(f"Unable to generate base64-encoded value")
+from .resource import get_ref_as_dataurl
+from .css import expand_urls_in_css
 
 def freeze_to_string(
     url: str,
@@ -37,25 +24,31 @@ def freeze_to_string(
 
     # Inline images
     for img in soup.find_all('img'):
-        img['src'] = _get_ref_as_dataurl(url, img['src'], session)
+        img['src'] = get_ref_as_dataurl(url, img['src'], session)
 
     # Handle <link> elements
     for link in soup.find_all('link'):
         # Inline rel="icon"
         if 'icon' in link.get_attribute_list('rel'):
-            link['href'] = _get_ref_as_dataurl(url, link['href'], session)
+            link['href'] = get_ref_as_dataurl(url, link['href'], session)
+
+        elif 'apple-touch-icon' in link.get_attribute_list('rel'):
+            link['href'] = get_ref_as_dataurl(url, link['href'], session)
+
+        elif 'apple-touch-startup-image' in link.get_attribute_list('rel'):
+            link['href'] = get_ref_as_dataurl(url, link['href'], session)
 
         # Turn rel="stylesheet" into <style>
-        if 'stylesheet' in link.get_attribute_list('rel'):
-            response = session.get(urljoin(url, link['href']))
+        elif 'stylesheet' in link.get_attribute_list('rel'):
+            stylesheet_url = urljoin(url, link['href'])
+            response = session.get(stylesheet_url)
             if response.status_code == 200:
                 style = soup.new_tag('style')
-                style.string = response.text
+                style.string = expand_urls_in_css(response.text, stylesheet_url, session)
                 # Carry over media=""
                 if link.get('media'):
                     style['media'] = link['media']
                 # TODO anything else?
-                # TODO should replace url() in CSS with data URLs
                 link.replace_with(style)
             else:
                 raise Exception(f"Unable to replace style {link['href']}")

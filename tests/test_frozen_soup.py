@@ -27,9 +27,17 @@ def session() -> requests.Session:
         "http://test/style.css",
         TestAdapter(b'* { color: white }', headers= { 'Content-type': 'text/css' })
     )
+    s.mount(
+        "http://test/urls.css",
+        TestAdapter(b'* { background: url(1x1.gif) }', headers = { 'Content-type': 'text/css' })
+    )
 
     s.mount("http://test/html-link-icon", TestAdapter(b'<link rel="icon" href="1x1.gif">'))
     s.mount("http://test/html-link-style", TestAdapter(b'<link rel="stylesheet" href="style.css">'))
+    s.mount(
+        "http://test/html-link-style-urls",
+        TestAdapter(b'<link rel="stylesheet" href="urls.css">')
+    )
 
     s.mount(
         "http://test/code.js",
@@ -74,6 +82,11 @@ def test_link_style(session):
     out = freeze_to_string('http://test/html-link-style', session)
 
     assert out == '<style>* { color: white }</style>'
+
+def test_link_style_urls(session, data_url):
+    out = freeze_to_string('http://test/html-link-style-urls', session)
+
+    assert out == f'<style>* {{ background: url({data_url}) }}</style>'
 
 def test_script(session):
     out = freeze_to_string('http://test/html-script', session)

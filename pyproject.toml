@@ -12,6 +12,7 @@ classifiers = [
 dependencies = [
     "requests",
     "beautifulsoup4",
+    "tinycss2",
 ]
 
 [build-system]
