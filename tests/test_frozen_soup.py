@@ -49,6 +49,9 @@ def session() -> requests.Session:
 
     s.mount("http://test/html-script", TestAdapter(b'<script src="code.js"></script>'))
 
+    # Not really data, but we're just testing to see it doesn't get mangled
+    s.mount("http://test/already-data-url", TestAdapter(b'<img src="data:foo;bar:baz">'))
+
     return s
 
 
@@ -95,3 +98,8 @@ def test_script(session):
     out = freeze_to_string('http://test/html-script', session)
 
     assert out == '<script>/* Code! */</script>';
+
+def test_already_data_url(session):
+    out = freeze_to_string('http://test/already-data-url', session)
+
+    assert out == '<img src="data:foo;bar:baz">';
