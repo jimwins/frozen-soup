@@ -29,7 +29,10 @@ def session() -> requests.Session:
     )
     s.mount(
         "http://test/urls.css",
-        TestAdapter(b'* { background: url(1x1.gif) }', headers = { 'Content-type': 'text/css' })
+        TestAdapter(
+            b'* { background: url(1x1.gif) } @media screen { background: url(1x1.gif) }',
+            headers = { 'Content-type': 'text/css' }
+        )
     )
 
     s.mount("http://test/html-link-icon", TestAdapter(b'<link rel="icon" href="1x1.gif">'))
@@ -86,7 +89,7 @@ def test_link_style(session):
 def test_link_style_urls(session, data_url):
     out = freeze_to_string('http://test/html-link-style-urls', session)
 
-    assert out == f'<style>* {{ background: url({data_url}) }}</style>'
+    assert out == f'<style>* {{ background: url({data_url}) }} @media screen {{ background: url({data_url}) }}</style>'
 
 def test_script(session):
     out = freeze_to_string('http://test/html-script', session)
