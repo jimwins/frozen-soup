@@ -1,6 +1,6 @@
 [project]
 name = "frozen-soup"
-version = "0.2"
+version = "0.3"
 description = "Create a single-file version of an HTML file"
 readme = "README.md"
 requires-python = ">=3.9"
