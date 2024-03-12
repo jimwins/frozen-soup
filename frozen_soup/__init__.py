@@ -23,25 +23,34 @@ def freeze_to_string(
 
     soup = BeautifulSoup(r.text, 'html.parser')
 
+    base_url = url
+
+    # Find the first <base href="">, which could follow a <base target="">
+    for base_tag in soup.find_all('base'):
+        base_href = base_tag.get('href')
+        if base_href is not None:
+            base_url = urljoin(url, base_href)
+            break
+
     # Inline images
     for img in soup.find_all('img'):
-        img['src'] = get_ref_as_dataurl(url, img['src'], session, timeout)
+        img['src'] = get_ref_as_dataurl(base_url, img['src'], session, timeout)
 
     # Handle <link> elements
     for link in soup.find_all('link'):
         # Inline rel="icon"
         if 'icon' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
+            link['href'] = get_ref_as_dataurl(base_url, link['href'], session, timeout)
 
         elif 'apple-touch-icon' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
+            link['href'] = get_ref_as_dataurl(base_url, link['href'], session, timeout)
 
         elif 'apple-touch-startup-image' in link.get_attribute_list('rel'):
-            link['href'] = get_ref_as_dataurl(url, link['href'], session, timeout)
+            link['href'] = get_ref_as_dataurl(base_url, link['href'], session, timeout)
 
         # Turn rel="stylesheet" into <style>
         elif 'stylesheet' in link.get_attribute_list('rel'):
-            stylesheet_url = urljoin(url, link['href'])
+            stylesheet_url = urljoin(base_url, link['href'])
             response = session.get(stylesheet_url, timeout=timeout)
             if response.status_code == 200:
                 style = soup.new_tag('style')
@@ -57,7 +66,7 @@ def freeze_to_string(
     # Inline <script src="">
     for script in soup.find_all('script'):
         if script.get('src'):
-            response = session.get(urljoin(url, script['src']), timeout=timeout)
+            response = session.get(urljoin(base_url, script['src']), timeout=timeout)
             if response.status_code == 200:
                 script.string = response.text
                 # TODO what other attributes do we care about?
