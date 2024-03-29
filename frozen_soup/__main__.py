@@ -29,17 +29,26 @@ def main() -> int:
         '-T', '--timeout',
         type=float,
         default=900.0,
+        metavar= 'SECONDS',
         help='default connect and read timeout in seconds'
     )
     parser.add_argument(
         '--connect-timeout',
         type=float,
+        metavar= 'SECONDS',
         help='default connect timeout in seconds (will override --timeout)'
     )
     parser.add_argument(
         '--read-timeout',
         type=float,
+        metavar= 'SECONDS',
         help='default read timeout in seconds (will override --timeout)'
+    )
+    parser.add_argument(
+        '--knockout',
+        action= 'append',
+        metavar= 'SELECTOR',
+        help='knock out elements matching the given CSS selector'
     )
 
     args = parser.parse_args()
@@ -48,7 +57,7 @@ def main() -> int:
     if (args.connect_timeout or args.read_timeout):
         timeout = (args.connect_timeout or timeout, args.read_timeout or timeout)
 
-    print(freeze_to_string(args.url, timeout=timeout))
+    print(freeze_to_string(args.url, timeout=timeout, knockouts=args.knockout))
 
     return 0
 

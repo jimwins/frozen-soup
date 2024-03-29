@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import requests
 
@@ -15,6 +15,7 @@ def freeze_to_string(
     session: Optional[requests.Session] = None,
     timeout: Union[float, tuple[float, float], None] = 900.0,
     formatter: str = 'html5',
+    knockouts: Optional[List[str]] = None,
 ) -> str:
     if session is None:
         session = requests.Session()
@@ -22,6 +23,12 @@ def freeze_to_string(
     r = session.get(url, timeout= timeout)
 
     soup = BeautifulSoup(r.text, 'html.parser')
+
+    # Process the knockouts first so we don't do any extra work on those
+    if knockouts is not None:
+        for selector in knockouts:
+            for tag in soup.css.select(selector):
+                tag.decompose()
 
     base_url = url
 
