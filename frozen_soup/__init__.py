@@ -82,5 +82,4 @@ def freeze_to_string(
             else:
                 raise Exception(f"Unable to replace script contents {script['src']}")
 
-    # Should allow the caller to specify the formatter to use, html5 for now
     return soup.decode(formatter=formatter)
