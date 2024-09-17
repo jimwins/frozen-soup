@@ -25,8 +25,12 @@ def get_ref_as_dataurl(
     encoded_content = base64.b64encode(response.content).decode("utf-8")
 
     # Grab the content-type from the response headers
-    # TODO: what if we have no content_type?
     content_type = response.headers.get('Content-Type')
+
+    # We assume application/octet-stream if no Content-type specified
+    # per https://httpwg.org/specs/rfc9110.html#field.content-type
+    if content_type == None:
+        content_type = 'application/octet-stream'
 
     # Return the data: URL with appropriate MIME type
     return f"data:{content_type};base64,{encoded_content}"

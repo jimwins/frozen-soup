@@ -52,6 +52,9 @@ def session() -> requests.Session:
     # Not really data, but we're just testing to see it doesn't get mangled
     s.mount("http://test/already-data-url", TestAdapter(b'<img src="data:foo;bar:baz">'))
 
+    s.mount("http://test/no-content-type", TestAdapter(b'DUNNO'))
+    s.mount("http://test/test-no-content-type", TestAdapter(b'<img src="/no-content-type">'))
+
     return s
 
 
@@ -103,3 +106,8 @@ def test_already_data_url(session):
     out = freeze_to_string('http://test/already-data-url', session)
 
     assert out == '<img src="data:foo;bar:baz">';
+
+def test_no_content_type(session):
+    out = freeze_to_string('http://test/test-no-content-type', session)
+
+    assert out == '<img src="data:application/octet-stream;base64,RFVOTk8=">';

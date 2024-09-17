@@ -87,7 +87,7 @@ def test_timeout_raised(session):
 
 def test_timeout_okay_on_img(session):
     out = freeze_to_string('http://test/img-contains-short-timeout', session, timeout= 100)
-    assert out == '<img src="data:None;base64,REFUQQ==">'
+    assert out == '<img src="data:application/octet-stream;base64,REFUQQ==">'
 
 def test_timeout_raised_on_img(session):
     with pytest.raises(ConnectTimeoutError):
@@ -107,7 +107,7 @@ def test_timeout_tuple_read_raised(session):
 
 def test_timeout_okay_on_link(session):
     out = freeze_to_string('http://test/link-contains-short-timeout', session, timeout= 100)
-    assert out == '<link href="data:None;base64,REFUQQ==" rel="icon">'
+    assert out == '<link href="data:application/octet-stream;base64,REFUQQ==" rel="icon">'
 
 def test_timeout_raised_on_link(session):
     with pytest.raises(ConnectTimeoutError):
