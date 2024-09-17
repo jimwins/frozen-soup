@@ -1,6 +1,6 @@
 [project]
 name = "frozen-soup"
-version = "0.6"
+version = "0.5"
 description = "Create a single-file version of an HTML file"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -31,9 +31,6 @@ test = ["pytest", "requests-testadapter"]
 [tool.pytest.ini_options]
 # Default of Test* causes noise with request_testadapter
 python_classes = "*Test"
-pythonpath = [
-  "."
-]
 
 [tool.distutils.egg_info]
 # Not really using this, so hide it for now
